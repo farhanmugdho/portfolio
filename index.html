@@ -286,12 +286,15 @@ a.addEventListener("click",function(e){
   if(!f.getAttribute("src"))f.setAttribute("src","cv.pdf");
   m.hidden=false;
 });
-var m=document.getElementById("cvm"),x=document.getElementById("cvx");
-if(x)x.addEventListener("click",function(){m.hidden=true});
-if(m){
-  m.addEventListener("click",function(e){if(e.target===m)m.hidden=true});
-  document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!m.hidden)m.hidden=true});
-}
+document.addEventListener("click",function(e){
+  var m=document.getElementById("cvm");
+  if(!m)return;
+  if(e.target===document.getElementById("cvx")||e.target===m)m.hidden=true;
+});
+document.addEventListener("keydown",function(e){
+  var m=document.getElementById("cvm");
+  if(e.key==="Escape"&&m&&!m.hidden)m.hidden=true;
+});
 })();
 </script>
 <script>
