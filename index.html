@@ -277,17 +277,21 @@ window.addEventListener("scroll",spy,{passive:true});spy();
 </script>
 <script>
 (function(){
-var a=document.getElementById("cvlink"),m=document.getElementById("cvm"),f=document.getElementById("cvf"),x=document.getElementById("cvx");
+var a=document.getElementById("cvlink");
 a.setAttribute("href","cv.pdf");a.setAttribute("target","_blank");
 a.addEventListener("click",function(e){
   e.preventDefault();
+  var m=document.getElementById("cvm"),f=document.getElementById("cvf");
+  if(!m||!f){location.href="cv.pdf";return}
   if(!f.getAttribute("src"))f.setAttribute("src","cv.pdf");
   m.hidden=false;
 });
-function close_(){m.hidden=true}
-x.addEventListener("click",close_);
-m.addEventListener("click",function(e){if(e.target===m)close_()});
-document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!m.hidden)close_()});
+var m=document.getElementById("cvm"),x=document.getElementById("cvx");
+if(x)x.addEventListener("click",function(){m.hidden=true});
+if(m){
+  m.addEventListener("click",function(e){if(e.target===m)m.hidden=true});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!m.hidden)m.hidden=true});
+}
 })();
 </script>
 <script>
