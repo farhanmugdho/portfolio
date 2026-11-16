@@ -350,7 +350,8 @@ var wrap=document.getElementById("prows");
 P.forEach(function(p,i){
   var r=document.createElement("a");r.className="pr";r.href=p.g;r.target="_blank";r.rel="noopener";
   var th=document.createElement("div");th.className="pth";th.style.background="linear-gradient(135deg,"+GR[i%GR.length]+")";
-  if(IMG[p.n]){var ig=document.createElement("img");ig.src=IMG[p.n];ig.alt=p.n+" preview";ig.loading="lazy";th.className="pth has";th.appendChild(ig)}else{var big=document.createElement("span");big.textContent=p.m;th.appendChild(big)}
+  function badge(){var big=document.createElement("span");big.textContent=p.m;th.appendChild(big)}
+  if(IMG[p.n]){var ig=document.createElement("img");ig.src=IMG[p.n];ig.alt=p.n+" preview";ig.loading="lazy";ig.onerror=function(){ig.remove();th.className="pth";badge()};th.className="pth has";th.appendChild(ig)}else{badge()}
   var tx=document.createElement("div");
   var h=document.createElement("h3");h.textContent=p.n;
   var d=document.createElement("p");d.className="psub";d.textContent=p.d;
