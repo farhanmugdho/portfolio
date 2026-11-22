@@ -213,8 +213,8 @@ nav a.on::after{background:#38bdf8}
 .cs{margin-top:26px}
 .cs p{margin:0 0 12px;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .cs .frr{display:flex;gap:14px;margin-bottom:14px}
-#loader{position:fixed;inset:0;z-index:100;background:var(--bg);display:grid;place-items:center;animation:ldOut .5s ease 2s forwards}
-@keyframes ldOut{to{opacity:0;visibility:hidden}}
+#loader{position:fixed;inset:0;z-index:100;background:var(--bg);display:grid;place-items:center;opacity:1;visibility:visible;transition:opacity .45s ease,visibility .45s}
+#loader.done{opacity:0;visibility:hidden;pointer-events:none}
 html.ld{overflow:hidden}
 .rv-on .rv{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
 .rv-on .rv.in{opacity:1;transform:none}
@@ -472,7 +472,22 @@ route();
 (function(){
 var root=document.documentElement;
 root.classList.add("ld");
-setTimeout(function(){root.classList.remove("ld");var l=document.getElementById("loader");if(l&&l.parentNode)l.parentNode.removeChild(l)},2800);
+var loaderDone=false;
+function hideLoader(){
+  var l=document.getElementById("loader");
+  if(!l||loaderDone)return;
+  loaderDone=true;
+  var finish=function(){
+    root.classList.remove("ld");
+    if(l&&l.parentNode)l.parentNode.removeChild(l);
+  };
+  l.classList.add("done");
+  var onEnd=function(e){if(e.target===l&&e.propertyName==="opacity"){l.removeEventListener("transitionend",onEnd);finish()}};
+  if(l.addEventListener)l.addEventListener("transitionend",onEnd);
+  setTimeout(finish,600);
+}
+if(document.readyState==="complete")hideLoader();
+else window.addEventListener("load",hideLoader,{once:true});
 var lk=document.getElementById("lks");
 if(lk){[].forEach.call(document.querySelectorAll("footer .fr a"),function(x){var c=document.createElement("a");c.className="lk";c.href=x.href;c.target="_blank";c.rel="noopener";c.appendChild(x.querySelector("svg").cloneNode(true));var sp=document.createElement("span");sp.textContent=x.getAttribute("aria-label")||"";c.appendChild(sp);lk.appendChild(c)})}
 if(!("IntersectionObserver" in window))return;
