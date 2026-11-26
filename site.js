@@ -8,23 +8,21 @@
       var vs=(vv&&isFinite(vv.scale)&&vv.scale>0)?vv.scale:1;
       var zoom=(dpr/baseDpr)*(vs/baseVv);
       if(!isFinite(zoom)||zoom<=0)zoom=1;
-      root.style.setProperty("--nav-inv",(1/zoom).toFixed(5));
-    }
-    var pending=false;
-    function schedule(){
-      if(pending)return;
-      pending=true;
-      (window.requestAnimationFrame||function(f){setTimeout(f,16)})(function(){pending=false;update()});
+      var inv=1/zoom;
+      root.style.setProperty("--nav-inv",inv.toFixed(5));
+      var h=header.offsetHeight||84;
+      root.style.setProperty("--nav-pad",h.toFixed(2)+"px");
     }
     update();
-    window.addEventListener("resize",schedule);
-    window.addEventListener("orientationchange",schedule);
-    if(vv)vv.addEventListener("resize",schedule);
-    if(document.fonts&&document.fonts.ready)document.fonts.ready.then(schedule);
+    window.addEventListener("resize",update);
+    window.addEventListener("orientationchange",update);
+    if(vv)vv.addEventListener("resize",update);
+    if(window.ResizeObserver)new ResizeObserver(update).observe(header);
+    if(document.fonts&&document.fonts.ready)document.fonts.ready.then(update);
     function watchDpr(){
       if(!window.matchMedia)return;
       var mq=window.matchMedia("(resolution: "+(window.devicePixelRatio||1)+"dppx)");
-      function onChange(){schedule();watchDpr()}
+      function onChange(){update();watchDpr()}
       if(mq.addEventListener)mq.addEventListener("change",onChange,{once:true});
       else if(mq.addListener)mq.addListener(function once(){mq.removeListener(once);onChange()});
     }
