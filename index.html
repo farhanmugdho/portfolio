@@ -13,6 +13,7 @@
 </head>
 <body>
 <div id="spot" aria-hidden="true"></div>
+<div id="loader" role="status" aria-label="Loading"><div class="ld-sp"><i style="transform:rotate(0deg);animation-delay:-1.2s"></i><i style="transform:rotate(30deg);animation-delay:-1.1s"></i><i style="transform:rotate(60deg);animation-delay:-1.0s"></i><i style="transform:rotate(90deg);animation-delay:-0.9s"></i><i style="transform:rotate(120deg);animation-delay:-0.8s"></i><i style="transform:rotate(150deg);animation-delay:-0.7s"></i><i style="transform:rotate(180deg);animation-delay:-0.6s"></i><i style="transform:rotate(210deg);animation-delay:-0.5s"></i><i style="transform:rotate(240deg);animation-delay:-0.4s"></i><i style="transform:rotate(270deg);animation-delay:-0.3s"></i><i style="transform:rotate(300deg);animation-delay:-0.2s"></i><i style="transform:rotate(330deg);animation-delay:-0.1s"></i></div></div>
 <header><div class="bar">
 <a class="logo" href="#top" aria-label="Home">FARHAN INTESAR MUGDHO</a>
 <nav aria-label="Sections">
@@ -207,12 +208,69 @@ route();
 </script>
 <script>
 (function(){
-  var lk=document.getElementById("lks");
-  if(lk){[].forEach.call(document.querySelectorAll("footer .fr a"),function(x){
-    var c=document.createElement("a");c.className="lk";c.href=x.href;c.target="_blank";c.rel="noopener";
-    c.appendChild(x.querySelector("svg").cloneNode(true));
-    var sp=document.createElement("span");sp.textContent=x.getAttribute("aria-label")||"";c.appendChild(sp);lk.appendChild(c)
-  })}
+var root=document.documentElement;
+root.classList.add("ld");
+var loaderDone=false;
+function hideLoader(){
+  var l=document.getElementById("loader");
+  if(!l||loaderDone)return;
+  loaderDone=true;
+  var finish=function(){
+    root.classList.remove("ld");
+    if(l&&l.parentNode)l.parentNode.removeChild(l);
+    document.dispatchEvent(new Event("portfolio:loaded"));
+  };
+  l.classList.add("done");
+  var onEnd=function(e){if(e.target===l&&e.propertyName==="opacity"){l.removeEventListener("transitionend",onEnd);finish()}};
+  if(l.addEventListener)l.addEventListener("transitionend",onEnd);
+  setTimeout(finish,600);
+}
+if(document.readyState==="complete")hideLoader();
+else window.addEventListener("load",hideLoader,{once:true});
+var lk=document.getElementById("lks");
+if(lk){[].forEach.call(document.querySelectorAll("footer .fr a"),function(x){var c=document.createElement("a");c.className="lk";c.href=x.href;c.target="_blank";c.rel="noopener";c.appendChild(x.querySelector("svg").cloneNode(true));var sp=document.createElement("span");sp.textContent=x.getAttribute("aria-label")||"";c.appendChild(sp);lk.appendChild(c)})}
+})();
+</script>
+<script>
+(function(){
+var about=document.getElementById("about");
+if(!about)return;
+var ps=[].slice.call(about.querySelectorAll(".about-wrap > div > p"));
+if(!ps.length)return;
+if(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+var parts=ps.map(function(p){
+  var txt=p.textContent;p.textContent="";
+  var d=document.createElement("span"),c=document.createElement("span"),r=document.createElement("span");
+  c.className="caret";c.style.display="none";r.className="t-rest";r.textContent=txt;
+  p.appendChild(d);p.appendChild(c);p.appendChild(r);
+  return {d:d,c:c,r:r,t:txt};
+});
+var started=false;
+function run(i){
+  if(i>=parts.length)return;
+  var P=parts[i],n=0;P.c.style.display="inline-block";
+  (function tick(){
+    if(n>=P.t.length){
+      if(i<parts.length-1){P.c.style.display="none";setTimeout(function(){run(i+1)},250)}
+      return;
+    }
+    n++;P.d.textContent=P.t.slice(0,n);P.r.textContent=P.t.slice(n);
+    setTimeout(tick,16);
+  })();
+}
+function start(){if(started)return;started=true;run(0)}
+var armed=false;
+function arm(){
+  if(armed||started)return;armed=true;
+  if("IntersectionObserver" in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){io.disconnect();start()}})},{threshold:.2});
+    io.observe(about);
+  }else start();
+}
+if(document.documentElement.classList.contains("ld")){
+  document.addEventListener("portfolio:loaded",arm,{once:true});
+  setTimeout(arm,4000);
+}else arm();
 })();
 </script>
 

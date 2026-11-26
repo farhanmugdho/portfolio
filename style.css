@@ -204,6 +204,12 @@ nav a.on::after{background:#38bdf8}
 .ld-sp{position:relative;width:64px;height:64px}
 .ld-sp i{position:absolute;left:50%;top:0;width:5px;height:17px;margin-left:-2.5px;border-radius:3px;background:#3b82f6;transform-origin:50% 32px;opacity:.12;animation:ldFade 1.2s linear infinite}
 @keyframes ldFade{0%{opacity:1}100%{opacity:.12}}
+#loader{position:fixed;inset:0;z-index:100;background:var(--bg);display:grid;place-items:center;opacity:1;visibility:visible;transition:opacity .45s ease,visibility .45s}
+#loader.done{opacity:0;visibility:hidden;pointer-events:none}
+html.ld{overflow:hidden}
+.t-rest{color:transparent}
+.caret{display:inline-block;width:2px;height:1.05em;background:var(--accent);margin-left:1px;vertical-align:-.15em;animation:blink .9s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
 .lks{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:14px}
 .lk{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;font-weight:500}
 .lk:hover{border-color:var(--accent)}
