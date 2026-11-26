@@ -8,10 +8,10 @@
       var vs=(vv&&isFinite(vv.scale)&&vv.scale>0)?vv.scale:1;
       var zoom=(dpr/baseDpr)*(vs/baseVv);
       if(!isFinite(zoom)||zoom<=0)zoom=1;
-      var scale=1/zoom,h=header.offsetHeight||64;
-      root.style.setProperty("--nav-scale",scale.toFixed(5));
-      root.style.setProperty("--nav-width",(zoom*100).toFixed(3)+"%");
-      root.style.setProperty("--nav-pad",(h*scale).toFixed(2)+"px");
+      var inv=1/zoom;
+      root.style.setProperty("--nav-inv",inv.toFixed(5));
+      var h=header.offsetHeight||84;
+      root.style.setProperty("--nav-pad",h.toFixed(2)+"px");
     }
     update();
     window.addEventListener("resize",update);
